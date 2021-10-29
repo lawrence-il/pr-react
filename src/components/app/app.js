@@ -14,13 +14,13 @@ class App extends Component{
         this.state = {
             data: [
                 {
-                    name:"John C.", salary: 800, increase: true, id: 1
+                    name:"John C.", salary: 800, increase: true, rise:false, id: 1
                 },
                 {
-                    name:"Alex M.", salary: 1000, increase: false, id: 2
+                    name:"Alex M.", salary: 1000, increase: false, rise:true, id: 2
                 },
                 {
-                    name:"Carl W.", salary: 3001, increase: true, id: 3
+                    name:"Carl W.", salary: 3001, increase: true, rise:false, id: 3
                 }
         
             ]
@@ -45,7 +45,7 @@ class App extends Component{
     addItem = (name, salary, e) => {
         e.preventDefault();
         let check = 0;
-        if (name && salary) {
+        if (name && salary && name.length > 1) {
             this.setState(({data}) => {
                 data.forEach(v => {
                     if (v.name === name) {
@@ -70,8 +70,9 @@ class App extends Component{
 
         }
     }
+
         
-    onToggleIncrease = (id) => {
+    // onToggleIncrease = (id) => {
         // this.setState(({data}) => { // this.state передаётся по умолчанию
         //     // const index = data.findIndex(elem => elem.id === id);
         //     // const newItem = {...data[index], increase: !data[index].increase}
@@ -82,31 +83,49 @@ class App extends Component{
         //     //     data: newArray
         //     // }                   
         // })
-        this.setState(({data}) => ({
-            data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
-                if (item.id === id) {
-                    return {...item, increase: !item.increase}
-                }
-                return item;
-            })
-        }))
 
-    }
+        // this.setState(({data}) => ({
+        //     data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
+        //         if (item.id === id) {
+        //             return {...item, increase: !item.increase}
+        //         }
+        //         return item;
+        //     })
+        // }))
 
-    onToggleRise = (id) => {
-        console.log(`Rise this ${id}`);
-    }
+    // }
 
-    countEmployees = () => this.state.data.length;
-
-    countRise = () => this.state.data.filter(item => item.increase === true).length;
+    // onToggleRise = (id) => {
+    //     this.setState(({data}) => ({
+    //         data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
+    //             if (item.id === id) {
+    //                 return {...item, rise: !item.rise}
+    //             }
+    //             return item;
+    //         })
+    //     }))
+    // }
         
+    onToggleProp = (id, prop) => {
+            this.setState(({data}) => ({
+                data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
+                    if (item.id === id) {
+                        return {...item, [prop]: !item[prop]}
+                    }
+                    return item;
+                })
+            }))
+    
+        }
+
     render() {
+        const countEmployees = this.state.data.length;
+        const countIncrease = this.state.data.filter(item => item.increase === true).length;
         return(
             <div className="app">
                 <AppInfo 
-                    countEmployees={this.countEmployees}
-                    countRise={this.countRise}/>
+                    countEmployees={countEmployees}
+                    countIncrease={countIncrease}/>
         
                 <div className="search-panel">
                     <SearchPanel/>
@@ -116,8 +135,10 @@ class App extends Component{
                 <EmployeesList 
                     data={this.state.data}
                     onDelete={this.deleteItem}
-                    onToggleIncrease={this.onToggleIncrease}
-                    onToggleRise={this.onToggleRise}/>
+                    onToggleProp={this.onToggleProp}
+                    // onToggleIncrease={this.onToggleIncrease}
+                    // onToggleRise={this.onToggleRise}
+                    />
                 <EmployeesAddForm
                     onAdd={this.addItem}/>
                 
