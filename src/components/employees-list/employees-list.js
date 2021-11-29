@@ -11,8 +11,6 @@ const EmployeesList = ({data, onDelete, onToggleProp}) => {
                     {...itemProps}
                     onDelete={() => onDelete(id)}
                     onToggleProp={(e) => onToggleProp(id, e.currentTarget.dataset.toggle)}
-                    // onToggleIncrease={() => onToggleIncrease(id)}
-                    // onToggleRise={() => onToggleRise(id)}
                     />  
             )
 

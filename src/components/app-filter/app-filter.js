@@ -1,16 +1,25 @@
 import './app-filter.css';
 
-const AppFilter = () => {
+const AppFilter = ({onRiseFilter, onAllEmp, onSalaryOverTh}) => {
     return (
         <div className="btn-group">
-            <button className="btn btn-light" type="button">
-                Все сотрудники
+            <button 
+                className="btn btn-light" 
+                type="button"
+                onClick={onAllEmp}>
+                    Все сотрудники
             </button>
-            <button className="btn btn-outline-light" type="button">
-                На повышение
+            <button 
+                className="btn btn-outline-light" 
+                type="button"
+                onClick={onRiseFilter}>
+                    На повышение
             </button>
-            <button className="btn btn-outline-light" type="button">
-                З/П больше 1000$
+            <button 
+                className="btn btn-outline-light" 
+                type="button"
+                onClick={onSalaryOverTh} >
+                    З/П больше 1000$
             </button>
         </div>
     )

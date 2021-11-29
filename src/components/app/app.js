@@ -23,13 +23,16 @@ class App extends Component{
                     name:"Carl W.", salary: 3001, increase: true, rise:false, id: 3
                 }
         
-            ]
+            ],
+            term: '',
+            riseFilter: '',
+            salaryOverTh: '',
 
         }
         this.maxId = this.state.data.length + 1;
         
     }
-
+    
     deleteItem = (id) => { 
         this.setState(({data}) => {
             const index = data.findIndex(elem => elem.id === id);
@@ -42,8 +45,7 @@ class App extends Component{
         })
     }
 
-    addItem = (name, salary, e) => {
-        e.preventDefault();
+    addItem = (name, salary) => {
         let check = 0;
         if (name && salary && name.length > 1) {
             this.setState(({data}) => {
@@ -72,40 +74,6 @@ class App extends Component{
     }
 
         
-    // onToggleIncrease = (id) => {
-        // this.setState(({data}) => { // this.state передаётся по умолчанию
-        //     // const index = data.findIndex(elem => elem.id === id);
-        //     // const newItem = {...data[index], increase: !data[index].increase}
-        //     // // const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)]; если так то 2 стр ниже не нужны
-        //     // const newArray = [...data]; // новый массив в котором лежат ссылки на объекты в data
-        //     // newArray[index] = newItem; // ссылка заменяется на нормальный объект
-        //     // return {
-        //     //     data: newArray
-        //     // }                   
-        // })
-
-        // this.setState(({data}) => ({
-        //     data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
-        //         if (item.id === id) {
-        //             return {...item, increase: !item.increase}
-        //         }
-        //         return item;
-        //     })
-        // }))
-
-    // }
-
-    // onToggleRise = (id) => {
-    //     this.setState(({data}) => ({
-    //         data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
-    //             if (item.id === id) {
-    //                 return {...item, rise: !item.rise}
-    //             }
-    //             return item;
-    //         })
-    //     }))
-    // }
-        
     onToggleProp = (id, prop) => {
             this.setState(({data}) => ({
                 data: data.map(item => { // получаем массив с одним новым/изм настоящим  объектом и ссылками на объекты из this.state.data
@@ -116,11 +84,60 @@ class App extends Component{
                 })
             }))
     
+    }
+
+    searchEmp = (items, term) => {
+        if (term.length === 0) {
+            return items;
         }
 
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1
+        })
+    }
+
+    onUpdateSearch = (term) => {
+        this.setState({
+            term: term
+        })
+    }
+
+    onRiseFilter = () => {
+        this.onAllEmp();
+        this.setState(({data}) => ({
+            riseFilter: data.filter(item => item.rise)
+        }))
+    }
+
+    onAllEmp = () => {
+        this.setState({
+            riseFilter: '',
+            salaryOverTh: '' 
+        })
+    }
+
+    onSalaryOverTh = () => {
+        this.onAllEmp();
+        this.setState(({data}) => ({
+            salaryOverTh: data.filter(item => item.salary > 1000)
+        }))
+
+    }
+
     render() {
+        const {data, term, riseFilter, salaryOverTh} = this.state;
         const countEmployees = this.state.data.length;
         const countIncrease = this.state.data.filter(item => item.increase === true).length;
+        let visibleData = this.searchEmp(data, term);
+
+
+        if (riseFilter) {
+            visibleData = riseFilter;
+        } 
+        if (salaryOverTh) {
+            visibleData = salaryOverTh;
+        }
+
         return(
             <div className="app">
                 <AppInfo 
@@ -128,16 +145,19 @@ class App extends Component{
                     countIncrease={countIncrease}/>
         
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+
+                    <AppFilter 
+                        onRiseFilter={this.onRiseFilter}
+                        onAllEmp={this.onAllEmp}
+                        onSalaryOverTh={this.onSalaryOverTh}
+                        />
                 </div>
     
                 <EmployeesList 
-                    data={this.state.data}
+                    data={visibleData}
                     onDelete={this.deleteItem}
                     onToggleProp={this.onToggleProp}
-                    // onToggleIncrease={this.onToggleIncrease}
-                    // onToggleRise={this.onToggleRise}
                     />
                 <EmployeesAddForm
                     onAdd={this.addItem}/>
