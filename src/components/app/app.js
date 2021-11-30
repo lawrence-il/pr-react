@@ -25,8 +25,8 @@ class App extends Component{
         
             ],
             term: '',
-            riseFilter: '',
-            salaryOverTh: '',
+            filter: 'all',
+            
 
         }
         this.maxId = this.state.data.length + 1;
@@ -102,41 +102,31 @@ class App extends Component{
         })
     }
 
-    onRiseFilter = () => {
-        this.onAllEmp();
-        this.setState(({data}) => ({
-            riseFilter: data.filter(item => item.rise)
-        }))
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 1000);
+            default:
+                return items
+        
+        }
     }
 
-    onAllEmp = () => {
+    onFilterSelect = (filter) => {
         this.setState({
-            riseFilter: '',
-            salaryOverTh: '' 
+            filter: filter
         })
     }
 
-    onSalaryOverTh = () => {
-        this.onAllEmp();
-        this.setState(({data}) => ({
-            salaryOverTh: data.filter(item => item.salary > 1000)
-        }))
-
-    }
-
     render() {
-        const {data, term, riseFilter, salaryOverTh} = this.state;
+        const {data, term, filter, } = this.state;
         const countEmployees = this.state.data.length;
         const countIncrease = this.state.data.filter(item => item.increase === true).length;
-        let visibleData = this.searchEmp(data, term);
+        let visibleData = this.filterPost(this.searchEmp(data, term), filter);
 
 
-        if (riseFilter) {
-            visibleData = riseFilter;
-        } 
-        if (salaryOverTh) {
-            visibleData = salaryOverTh;
-        }
 
         return(
             <div className="app">
@@ -148,10 +138,8 @@ class App extends Component{
                     <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
 
                     <AppFilter 
-                        onRiseFilter={this.onRiseFilter}
-                        onAllEmp={this.onAllEmp}
-                        onSalaryOverTh={this.onSalaryOverTh}
-                        />
+                        filter = {this.state.filter}
+                        onFilterSelect={this.onFilterSelect}/>
                 </div>
     
                 <EmployeesList 
